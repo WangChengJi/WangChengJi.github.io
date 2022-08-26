@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>俺老李是谁呀</title>
+  <title>凉人夢</title>
   
-  <subtitle>十里八乡俊后生</subtitle>
+  <subtitle>十里八乡有名的俊后生</subtitle>
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
@@ -10,7 +10,7 @@
   <id>http://example.com/</id>
   
   <author>
-    <name>李云龙</name>
+    <name>WangChengJi</name>
     
   </author>
   
