@@ -12,6 +12,12 @@
       
       
       
+        <tags>
+            
+            <tag> MySQL </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -25,6 +31,12 @@
       
       
       
+        <tags>
+            
+            <tag> Java </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -37,6 +49,12 @@
         <content type="html"><![CDATA[<p>快速发布新文章</p><h2 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h2><h3 id="新增文章"><a href="#新增文章" class="headerlink" title="新增文章"></a>新增文章</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="本地运行"><a href="#本地运行" class="headerlink" title="本地运行"></a>本地运行</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="生成静态页面"><a href="#生成静态页面" class="headerlink" title="生成静态页面"></a>生成静态页面</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="发布到线上"><a href="#发布到线上" class="headerlink" title="发布到线上"></a>发布到线上</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
       
       
+      
+        <tags>
+            
+            <tag> hexo </tag>
+            
+        </tags>
       
     </entry>
     
