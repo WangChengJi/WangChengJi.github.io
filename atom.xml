@@ -3,11 +3,11 @@
   <title>凉人夢</title>
   
   <subtitle>十里八乡有名的俊后生</subtitle>
-  <link href="http://example.com/atom.xml" rel="self"/>
+  <link href="https://wangchengji.github.io/atom.xml" rel="self"/>
   
-  <link href="http://example.com/"/>
+  <link href="https://wangchengji.github.io/"/>
   <updated>2022-08-27T08:50:26.765Z</updated>
-  <id>http://example.com/</id>
+  <id>https://wangchengji.github.io/</id>
   
   <author>
     <name>WangChengJi</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>MySql索引</title>
-    <link href="http://example.com/fwzssd/756c412e.html"/>
-    <id>http://example.com/fwzssd/756c412e.html</id>
+    <link href="https://wangchengji.github.io/fwzssd/756c412e.html"/>
+    <id>https://wangchengji.github.io/fwzssd/756c412e.html</id>
     <published>2022-08-27T01:15:22.000Z</published>
     <updated>2022-08-27T08:50:26.765Z</updated>
     
@@ -38,8 +38,8 @@
   
   <entry>
     <title>Development Tool</title>
-    <link href="http://example.com/fwzssd/60588ca5.html"/>
-    <id>http://example.com/fwzssd/60588ca5.html</id>
+    <link href="https://wangchengji.github.io/fwzssd/60588ca5.html"/>
+    <id>https://wangchengji.github.io/fwzssd/60588ca5.html</id>
     <published>2022-08-26T07:21:03.000Z</published>
     <updated>2022-08-27T01:17:15.098Z</updated>
     
@@ -58,8 +58,8 @@
   
   <entry>
     <title>Hello World</title>
-    <link href="http://example.com/fwzssd/4a17b156.html"/>
-    <id>http://example.com/fwzssd/4a17b156.html</id>
+    <link href="https://wangchengji.github.io/fwzssd/4a17b156.html"/>
+    <id>https://wangchengji.github.io/fwzssd/4a17b156.html</id>
     <published>2022-08-25T09:37:53.819Z</published>
     <updated>2022-08-27T01:25:42.638Z</updated>
     
