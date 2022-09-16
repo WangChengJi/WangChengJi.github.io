@@ -6,7 +6,7 @@
   <link href="https://wangchengji.github.io/atom.xml" rel="self"/>
   
   <link href="https://wangchengji.github.io/"/>
-  <updated>2022-09-12T12:49:09.728Z</updated>
+  <updated>2022-09-16T07:38:08.701Z</updated>
   <id>https://wangchengji.github.io/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Sentinel</title>
+    <link href="https://wangchengji.github.io/fwzssd/1408c19.html"/>
+    <id>https://wangchengji.github.io/fwzssd/1408c19.html</id>
+    <published>2022-09-16T06:34:17.000Z</published>
+    <updated>2022-09-16T07:38:08.701Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Sentinel"><a href="#Sentinel" class="headerlink" title="Sentinel"></a>Sentinel</h1><p>简介:Sentinel 是面向分布式服务架构的高可用流量防护组件，主要以流量为切入点，从限流、流量整形、熔断降级、系统负载保护、热点防护等多个维度来帮助开发者保障微服务的稳定性。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;Sentinel&quot;&gt;&lt;a href=&quot;#Sentinel&quot; class=&quot;headerlink&quot; title=&quot;Sentinel&quot;&gt;&lt;/a&gt;Sentinel&lt;/h1&gt;&lt;p&gt;简介:Sentinel 是面向分布式服务架构的高可用流量防护组件，主要以流量为切入点，从限流</summary>
+      
+    
+    
+    
+    
+    <category term="Sentinel" scheme="https://wangchengji.github.io/tags/Sentinel/"/>
+    
+  </entry>
   
   <entry>
     <title>Redis的持久化机制</title>
