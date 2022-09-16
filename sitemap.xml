@@ -2,15 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://wangchengji.github.io/fwzssd/1408c19.html</loc>
-    
-    <lastmod>2022-09-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://wangchengji.github.io/fwzssd/e5adb42e.html</loc>
     
     <lastmod>2022-09-12</lastmod>
@@ -83,13 +74,6 @@
 
   
   <url>
-    <loc>https://wangchengji.github.io/tags/Java/</loc>
-    <lastmod>2022-09-16</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://wangchengji.github.io/tags/MySQL/</loc>
     <lastmod>2022-09-16</lastmod>
     <changefreq>weekly</changefreq>
@@ -97,14 +81,14 @@
   </url>
   
   <url>
-    <loc>https://wangchengji.github.io/tags/Redis/</loc>
+    <loc>https://wangchengji.github.io/tags/Java/</loc>
     <lastmod>2022-09-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://wangchengji.github.io/tags/Sentinel/</loc>
+    <loc>https://wangchengji.github.io/tags/Redis/</loc>
     <lastmod>2022-09-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

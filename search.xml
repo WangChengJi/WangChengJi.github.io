@@ -4,25 +4,6 @@
   
     
     <entry>
-      <title>Sentinel</title>
-      <link href="/fwzssd/1408c19.html"/>
-      <url>/fwzssd/1408c19.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="Sentinel"><a href="#Sentinel" class="headerlink" title="Sentinel"></a>Sentinel</h1><p>简介:Sentinel 是面向分布式服务架构的高可用流量防护组件，主要以流量为切入点，从限流、流量整形、熔断降级、系统负载保护、热点防护等多个维度来帮助开发者保障微服务的稳定性。</p>]]></content>
-      
-      
-      
-        <tags>
-            
-            <tag> Sentinel </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>Redis的持久化机制</title>
       <link href="/fwzssd/e5adb42e.html"/>
       <url>/fwzssd/e5adb42e.html</url>
