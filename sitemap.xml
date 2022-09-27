@@ -2,9 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://wangchengji.github.io/fwzssd/6926f8db.html</loc>
+    
+    <lastmod>2022-09-27</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://wangchengji.github.io/fwzssd/b543ced0.html</loc>
     
-    <lastmod>2022-09-26</lastmod>
+    <lastmod>2022-09-27</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -94,7 +103,7 @@
 
   <url>
     <loc>https://wangchengji.github.io/</loc>
-    <lastmod>2022-09-26</lastmod>
+    <lastmod>2022-09-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -102,42 +111,49 @@
   
   <url>
     <loc>https://wangchengji.github.io/tags/Java/</loc>
-    <lastmod>2022-09-26</lastmod>
+    <lastmod>2022-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wangchengji.github.io/tags/EasyExcel/</loc>
-    <lastmod>2022-09-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://wangchengji.github.io/tags/MySQL/</loc>
-    <lastmod>2022-09-26</lastmod>
+    <lastmod>2022-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wangchengji.github.io/tags/RabbitMQ/</loc>
-    <lastmod>2022-09-26</lastmod>
+    <lastmod>2022-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangchengji.github.io/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1-xxl-job/</loc>
+    <lastmod>2022-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangchengji.github.io/tags/MySQL/</loc>
+    <lastmod>2022-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wangchengji.github.io/tags/Redis/</loc>
-    <lastmod>2022-09-26</lastmod>
+    <lastmod>2022-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wangchengji.github.io/tags/hexo/</loc>
-    <lastmod>2022-09-26</lastmod>
+    <lastmod>2022-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
