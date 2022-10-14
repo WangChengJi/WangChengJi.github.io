@@ -1,0 +1,417 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>分布式事务解决方案 | 凉人夢</title><meta name="keywords" content="Seata"><meta name="author" content="凉人夢"><meta name="copyright" content="凉人夢"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="分布式事务解决方案1.事务数据库事务(简称：事务，Transaction)是指数据库执行过程中的一个逻辑单位，由一个有限的数据库操作序列构成[由当前业务逻辑多个不同操作构成]。 事务拥有以下四个特性，习惯上被称为ACID特性： 原子性(Atomicity)：事务作为一个整体被执行，包含在其中的对数据库的操作要么全部被执行，要么都不执行。 一致性(Consistency)：事务应确保数据库的状态从一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式事务解决方案">
+<meta property="og:url" content="https://wangchengji.github.io/fwzssd/62ceeeec.html">
+<meta property="og:site_name" content="凉人夢">
+<meta property="og:description" content="分布式事务解决方案1.事务数据库事务(简称：事务，Transaction)是指数据库执行过程中的一个逻辑单位，由一个有限的数据库操作序列构成[由当前业务逻辑多个不同操作构成]。 事务拥有以下四个特性，习惯上被称为ACID特性： 原子性(Atomicity)：事务作为一个整体被执行，包含在其中的对数据库的操作要么全部被执行，要么都不执行。 一致性(Consistency)：事务应确保数据库的状态从一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic1.imgdb.cn/item/6343d87716f2c2beb1eda8a5.jpg">
+<meta property="article:published_time" content="2022-10-10T08:10:38.000Z">
+<meta property="article:modified_time" content="2022-10-14T05:11:49.346Z">
+<meta property="article:author" content="凉人夢">
+<meta property="article:tag" content="Seata">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic1.imgdb.cn/item/6343d87716f2c2beb1eda8a5.jpg"><link rel="shortcut icon" href="/img/tb2.jpeg"><link rel="canonical" href="https://wangchengji.github.io/fwzssd/62ceeeec"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '分布式事务解决方案',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-10-14 13:11:49'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="凉人夢" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/tx3.jpeg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/bangumis/index.html"><i class="fa-fw fas fa-home"></i><span> 追番</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://pic1.imgdb.cn/item/6343d87716f2c2beb1eda8a5.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">凉人夢</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/bangumis/index.html"><i class="fa-fw fas fa-home"></i><span> 追番</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">分布式事务解决方案</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-10-10T08:10:38.000Z" title="发表于 2022-10-10 16:10:38">2022-10-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-10-14T05:11:49.346Z" title="更新于 2022-10-14 13:11:49">2022-10-14</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="分布式事务解决方案"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/fwzssd/62ceeeec.html#post-comment" itemprop="discussionUrl"><span class="valine-comment-count" data-xid="/fwzssd/62ceeeec.html" itemprop="commentCount"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="分布式事务解决方案"><a href="#分布式事务解决方案" class="headerlink" title="分布式事务解决方案"></a>分布式事务解决方案</h1><h2 id="1-事务"><a href="#1-事务" class="headerlink" title="1.事务"></a>1.事务</h2><p>数据库事务(简称：事务，Transaction)是指数据库执行过程中的一个逻辑单位，由一个有限的数据库操作序列构成[由当前业务逻辑多个不同操作构成]。</p>
+<p>事务拥有以下四个特性，习惯上被称为ACID特性：</p>
+<p><strong>原子性(Atomicity)：</strong>事务作为一个整体被执行，包含在其中的对数据库的操作要么全部被执行，要么都不执行。</p>
+<p><strong>一致性(Consistency)：</strong>事务应确保数据库的状态从一个一致状态转变为另一个一致状态。一致状态是指数据库中的数据应满足完整性约束。除此之外，一致性还有另外一层语义，就是事务的中间状态不能被观察到(这层语义也有说应该属于原子性)。</p>
+<p><strong>隔离性(Isolation)：</strong>多个事务并发执行时，一个事务的执行不应影响其他事务的执行，如同只有这一个操作在被数据库所执行一样。</p>
+<p><strong>持久性(Durability)：</strong>已被提交的事务对数据库的修改应该永久保存在数据库中。在事务结束时，此操作将不可逆转。</p>
+<h2 id="2-本地事务"><a href="#2-本地事务" class="headerlink" title="2.本地事务"></a>2.本地事务</h2><p>起初，事务仅限于对单一数据库资源的访问控制,架构服务化以后，事务的概念延伸到了服务中。倘若将一个单一的服务操作作为一个事务，那么整个服务操作只能涉及一个单一的数据库资源,这类基于单个服务单一数据库资源访问的事务，被称为本地事务(Local Transaction)。现在最流行的spring框架中事务的本质其实就是数据库对事务的支持，没有数据库的事务支持，spring是无法提供事务功能的。</p>
+<p><strong>开启本地事务的方式：</strong></p>
+<p>1.配置类上加上@EnableTransactionManagement开启本地事务，在相关的类和方法上通过注解@Transactional标识。<br> 2.spring  在启动的时候会去解析生成相关的bean，这时候会查看拥有相关注解的类和方法，并且为这些类和方法生成代理，并根据@Transaction的相关参数进行相关配置注入，这样就在代理中为我们把相关的事务处理掉了（开启正常提交事务，异常回滚事务）。<br> 3.真正的数据库层的事务提交和回滚是通过bin log或者redo log实现的。</p>
+<h2 id="3-分布式事务"><a href="#3-分布式事务" class="headerlink" title="3.分布式事务"></a>3.分布式事务</h2><p>随着微服务的兴起，本地事务已经满足不了微服务间的事务，为了保证不同数据库的数据一致性，又引入了分布式事务去管理微服务中的事务，分布式事务指事务的参与者、支持事务的服务器、资源服务器以及事务管理器分别位于不同的分布式系统的不同节点之上,且属于不同的应用，分布式事务需要保证这些操作要么全部成功，要么全部失败。</p>
+<h3 id="3-1CAP定理"><a href="#3-1CAP定理" class="headerlink" title="3.1CAP定理"></a>3.1CAP定理</h3><p>CAP定理是分布式系统中的重要理论，在一个分布式系统中最多只能同时满足一致性（Consistency）、可用性（Availability）和分区容错性（Partition tolerance）这三项中的两项，不能同时满足这三项。</p>
+<ul>
+<li>C：Consistency（一致性）</li>
+<li>A：Availability（可用性）</li>
+<li>P：Partition tolerance（分区容错性）</li>
+</ul>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/6344e98516f2c2beb1bfd820.png"></p>
+<p><strong>一致性（Consistency）</strong></p>
+<p>一致性指”all nodes see the same data at the same time”，<strong>即更新操作成功后，所有节点在同一时间的数据完全一致</strong>。对于一致性的理解，可以从客户端和服务端两个不同的视角来分析。</p>
+<ul>
+<li>从客户端来看，一致性主要指的是多并发请求时更新过的数据如何获取的问题？如果更新过的数据需要立刻被后续的请求获取到就是强一致性，如果能容忍后续的请求部分或者全部访问不到则是弱一致性，如果经过一段时间后要求能访问到更新后的数据则是最终一致性。</li>
+<li>从服务端来看，一致性则是数据更新后如何同步到整个分布式系统，以保证数据最终一致性。</li>
+</ul>
+<p><strong>可用性（Availability）</strong></p>
+<p>可用性指”reads and writes always succeed”，即服务一直可用且能够正常响应（不保证返回的是最新写入的数据）。</p>
+<p>对于一个讲究可用性的分布式系统，每一个非故障的节点必须对每一个请求作出响应，因此我们在衡量一个系统可用性的时候，都是通过停机时间来计算的。通过描述一个系统的可用性时，比如某某系统可用性可以达到5个9，意思就是说该系统的可用水平是99.999%，即全年停机时间不超过<code>(1-0.99999)*365*24*60 = 5.256min</code>，这是一个极高的要求。</p>
+<p>好的可用性主要是指系统能够很好的为用户提供服务，不出现操作失败或者访问超时等用户体验不好的情况。一个分布式系统设计会涉及很多子系统，例如负载均衡器、Web服务器、应用代码、缓存系统、数据库服务器等，任何一个节点的不稳定都可以会影响整个系统的可用性。</p>
+<p><strong>分区容错性（Partition tolerance）</strong></p>
+<p>分区容错性指”the system continues to operate despite arbitrary message loss or failure  of part of the system”，即分布式系统在遇到某节点或网络分区故障的时候，仍然能够对外提供满足一致性和可用性的服务。</p>
+<h3 id="3-2CAP权衡"><a href="#3-2CAP权衡" class="headerlink" title="3.2CAP权衡"></a><strong>3.2CAP权衡</strong></h3><p>上面我们说了CAP定理注定我们只能同时满足其中的两项。</p>
+<p><strong>CA舍弃P</strong></p>
+<p>这种情况在分布式系统中是不存在的，在分布式系统下，网络分区是一个基本要求。如果要舍弃P就意味着舍弃分布式系统，那也就没有必要讨论CAP定理了，这也是为什么在前面的CAP证明中，我们以系统满足P为前提论述了无法同时满足C和A。因此对于一个分布式系统来说，P是一个基本要求，CAP三者中只能在CA两者之间做权衡，并且要想尽办法提升P。</p>
+<p><strong>CP舍弃A</strong></p>
+<p>如果一个分布式系统不要求强的可用性，即允许系统停机或者长时间无响应的话，就可以在CAP三者中保障CP而舍弃A。这样的分布式系统一旦发生网络故障或者消息丢失等情况，就要牺牲用户体验，等数据一致后再让用户访问系统。</p>
+<p>设计成CP的系统比较典型的就是分布式数据库，在发生极端情况时，优先保证数据的强一致性，代价就是舍弃系统的可用性。如Redis、HBase这种分布式存储系统，如ZooKeeper这种分布式协调系统，数据的一致性是最基本的要求。</p>
+<blockquote>
+<p>  ZooKeeper可以保证任何时刻的请求访问都能得到一致的数据结果，同时具备分区容错性，但不能保证每次服务的可用性，在极端情况下可能会丢失一些请求，需要程序重新请求才能获得结果。ZooKeeper是分布式协调服务，职责是保证数据在其管辖的所有服务之间保持同步一致，所以就很好理解为什么ZooKeeper被设计成CP而不是AP特性的了。</p>
+</blockquote>
+<p><strong>AP舍弃C</strong></p>
+<p>保证高可用和分区容错性的同时，需要放弃一致性，为了保证高可用，用户请求时需要马上返回，每个节点只能用本地数据提供服务，这样会导致全局数据的不一致性。确切的说是放弃了数据强一致性，退而求其次保证数据最终一致性。这种舍弃强一致性而保证系统的分区容错性和可用性的场景非常多，比如电商网站的秒杀活动或者12306购票，在高并发情况下可能需要一些排队机制，这就是在可用性和分区容错性方面保证了系统正常服务，然后在数据的一致性方面做了一些让步，会影响一些用户体验，但也不会造成用户流程的严重阻塞，这种机制虽然在瞬间可能存在数据不一致的情况，但过了一段时间还是要保证最终一致性的。</p>
+<blockquote>
+<p> 对于多数大型互联网应用的场景，主机众多，部署分散，而且现在的集群规模越来越大，所以节点故障、网络故障时有发生，要保证服务达到N个9，保障AP舍弃C（退而求其次保证最终一致性）是常见的一种选择。</p>
+</blockquote>
+<p>CAP如何权衡和取舍没有好坏之分，需要根据不同的业务场景进行选择，适合的才是最好的。对于涉及到钱这种不能有任何差错的场景，数据强一致性是必须要保证的。对于其他场景，比较普遍的做法是选择可用性和分区容错性，舍弃强一致性，退而求其次使用最终一致性来保证数据的安全。</p>
+<h3 id="3-3BASE理论"><a href="#3-3BASE理论" class="headerlink" title="3.3BASE理论"></a>3.3<strong>BASE理论</strong></h3><p>在分布式系统中，面对CAP权衡时，通常的做法会选择AP舍弃C（舍弃强一致性但保证最终一致性），这其实也是分布式领域的另外一个理论，叫BASE理论。BASE理论是对CAP理论的延伸，核心思想是即时无法做到强一致性（Strong Consistency，CAP的一致性就是强一致性），但系统可以采用合适的方式达到最终一致性（Eventual Consistency）。</p>
+<blockquote>
+<p> BASE是指基本可用（Basically Available）、软状态（Soft State）、最终一致性（Eventual Consistency）。</p>
+</blockquote>
+<p><strong>基本可用（Basically Available）</strong></p>
+<p>基本可用是指分布式系统在出现故障时，允许损失部分可用性，即保证核心可用。如电商大促时，为了应对访问量激增，部分用户可能会被引导到降级页面，服务层也可能只提供降级服务，这就是损失部分可用性的体现。</p>
+<p><strong>软状态（Soft State）</strong></p>
+<p>软状态是指允许系统存在中间状态，而该中间状态不会影响系统整体可用性。分布式存储中一般一份数据会有多个副本，允许不同节点间副本同步的延时就是软状态的体现（如MySQL的复制）。</p>
+<p><strong>最终一致性（Eventual Consistency）</strong></p>
+<p>最终一致性是指系统中的所有数据副本经过一定时间后，最终能够达到一致的状态。</p>
+<h2 id="4-分布式事务的实现方案"><a href="#4-分布式事务的实现方案" class="headerlink" title="4.分布式事务的实现方案"></a>4.分布式事务的实现方案</h2><ul>
+<li>XA 方案</li>
+<li>TCC 方案</li>
+<li>本地消息表</li>
+<li>可靠消息最终一致性方案</li>
+<li>最大努力通知方案</li>
+</ul>
+<h3 id="4-1两阶段提交-x2F-XA"><a href="#4-1两阶段提交-x2F-XA" class="headerlink" title="4.1两阶段提交&#x2F;XA"></a>4.1两阶段提交&#x2F;XA</h3><p>XA是由X&#x2F;Open组织提出的分布式事务的规范，XA规范主要定义了(全局)事务管理器(TM)和(局部)资源管理器(RM)之间的接口。本地的数据库如mysql在XA中扮演的是RM角色</p>
+<p><strong>XA一共分为两阶段：</strong></p>
+<p><strong>第一阶段（prepare）：</strong>即所有的参与者RM准备执行事务并锁住需要的资源。参与者ready时，向TM报告已准备就绪。<br><strong>第二阶段 (commit&#x2F;rollback)：</strong>当事务管理者(TM)确认所有参与者(RM)都ready后，向所有参与者发送commit命令。<br>目前主流的数据库基本都支持XA事务，包括mysql、oracle、sqlserver、postgre</p>
+<p>XA 事务由一个或多个资源管理器（RM）、一个事务管理器（TM）和一个应用程序（ApplicationProgram）组成。</p>
+<p>XA事务的<strong>特点</strong>是：</p>
+<ul>
+<li>简单易理解，开发较容易。</li>
+<li>对资源进行了长时间的锁定，并发度低。</li>
+</ul>
+<p><strong>可能存在的问题：</strong></p>
+<ul>
+<li>单点故障：一旦事务管理器出现故障，整个系统不可用。</li>
+<li>数据不一致：在阶段二，如果事务管理器只发送了部分 commit 消息，此时网络发生异常，那么只有部分参与者接收到 commit 消息，也就是说只有部分参与者提交了事务，使得系统数据不一致。</li>
+<li>响应时间较长：整个消息链路是串行的，要等待响应结果，不适合高并发的场景。</li>
+<li>不确定性：当事务管理器发送 commit 之后，并且此时只有一个参与者收到了 commit，那么当该参与者与事务管理器同时宕机之后，重新选举的事务管理器无法确定该条消息是否提交成功。</li>
+</ul>
+<h3 id="4-2-3PC（三阶段提交）"><a href="#4-2-3PC（三阶段提交）" class="headerlink" title="4.2 3PC（三阶段提交）"></a>4.2 3PC（三阶段提交）</h3><p>相对于 2PC，3PC（三阶段提交）增加了 CanCommit 阶段和超时机制。如果一段时间内没有收到协调者的 commit 请求，那么就会自动进行 commit，解决了 2PC 单点故障的问题。但是性能问题和不一致问题仍然没有根本解决。</p>
+<p><strong>第一阶段：CanCommit 阶段</strong></p>
+<p>此阶段所做的事很简单，就是协调者询问事务参与者，是否有能力完成此次事务。如果都返回 yes，则进入第二阶段；有一个返回 no 或等待响应超时，则中断事务，并向所有参与者发送 abort 请求<br><strong>第二阶段：PreCommit 阶段</strong></p>
+<p>此时协调者会向所有的参与者发送 PreCommit 请求，参与者收到后开始执行事务操作，并将 Undo 和 Redo 信息记录到事务日志中。参与者执行完事务操作后(此时属于未提交事务的状态)，就会向协调者反馈“Ack”表示已经准备好提交了，并等待协调者的下一步指令。<br><strong>第三阶段：DoCommit 阶段</strong></p>
+<p>在阶段二中如果所有的参与者节点都可以进行 PreCommit 提交，那么协调者就会从“预提交状态”转变为“提交状态”。然后向所有的参与者节点发送 doCommit 请求，参与者节点在收到提交请求后就会各自执行事务提交操作，并向协调者节点反馈 Ack 消息，协调者收到所有参与者的 Ack 消息后完成事务。相反，如果有一个参与者节点未完成 PreCommit 的反馈或者反馈超时，那么协调者都会向所有的参与者节点发送 abort 请求，从而中断事务。</p>
+<h3 id="4-3TCC"><a href="#4-3TCC" class="headerlink" title="4.3TCC"></a>4.3TCC</h3><p>关于 TCC（Try-Confirm-Cancel）的概念，最早是由 Pat Helland 于 2007 年发表的一篇名为《Life beyond Distributed Transactions:an Apostate’s Opinion》的论文提出。</p>
+<p><strong>TCC分为3个阶段</strong></p>
+<p><strong>Try 阶段：</strong>尝试执行，完成所有业务检查（一致性）, 预留必须业务资源（准隔离性）</p>
+<p><strong>Confirm 阶段：</strong>确认执行真正执行业务，不作任何业务检查，只使用 Try 阶段预留的业务资源，Confirm 操作要求具备幂等设计，Confirm 失败后需要进行重试。</p>
+<p><strong>Cancel 阶段：</strong>取消执行，释放 Try 阶段预留的业务资源。Cancel 阶段的异常和 Confirm 阶段异常处理方案基本上一致，要求满足幂等设计。</p>
+<p>TCC<strong>特点</strong>如下：</p>
+<ul>
+<li>并发度较高，无长期资源锁定。</li>
+<li>开发量较大，需要提供Try&#x2F;Confirm&#x2F;Cancel接口。</li>
+<li>TCC适用于订单类业务，对中间状态有约束的业务。</li>
+</ul>
+<p>TCC事务的处理流程与2PC两阶段提交类似，不过2PC通常都是在跨库的DB层面，而TCC本质上就是一个应用层面的2PC，需要通过业务逻辑来实现。这种分布式事务的实现方式的优势在于，可以让应用自己定义数据库操作的粒度，使得降低锁冲突、提高吞吐量成为可能。 不足之处则在于对应用的侵入性非常强，业务逻辑的每个分支都需要实现try、confirm、cancel三个操作。此外，其实现难度也比较大，需要按照网络状态、系统故障等不同的失败原因实现不同的回滚策略。为了满足一致性的要求，confirm和cancel接口还必须实现幂等。</p>
+<h3 id="4-4最大努力通知"><a href="#4-4最大努力通知" class="headerlink" title="4.4最大努力通知"></a>4.4<strong>最大努力通知</strong></h3><p>最大努力通知的方案实现比较简单，适用于一些最终一致性要求较低的业务。</p>
+<p>执行流程：</p>
+<ul>
+<li>系统 A 本地事务执行完之后，发送个消息到 MQ。</li>
+<li>这里会有个专门消费 MQ 的服务，该服务会消费 MQ 并调用系统 B 的接口。</li>
+<li>要是系统 B 执行成功就 ok 了；要是系统 B 执行失败了，那么最大努力通知服务就定时尝试重新调用系统 B，反复 N 次，最后还是不行就放弃（这里一般有个阈值，重复执行失败多少次就记录日志或者提醒人工处理）。</li>
+</ul>
+<h3 id="4-5-Sagas-事务模型长时间运行的事务"><a href="#4-5-Sagas-事务模型长时间运行的事务" class="headerlink" title="4.5 Sagas 事务模型长时间运行的事务"></a>4.5 Sagas 事务模型长时间运行的事务</h3><p>其核心思想是将长事务拆分为多个本地短事务，由 Saga 事务协调器协调，如果正常结束那就正常完成，如果某个步骤失败，则根据相反顺序一次调用补偿操作。Seata 框架中一个分布式事务包含三种角色：</p>
+<p>「Transaction Coordinator (TC)」：事务协调器，维护全局事务的运行状态，负责协调并驱动全局事务的提交或回滚。「Transaction Manager ™」：控制全局事务的边界，负责开启一个全局事务，并最终发起全局提交或全局回滚的决议。「Resource Manager (RM)」：控制分支事务，负责分支注册、状态汇报，并接收事务协调器的指令，驱动分支（本地）事务的提交和回滚。</p>
+<p>seata框架<strong>「为每一个RM维护了一张UNDO_LOG表」</strong>，其中保存了每一次本地事务的回滚数据。</p>
+<p><strong>具体流程：</strong></p>
+<ol>
+<li><p>首先 TM 向 TC 申请开启一个全局事务，全局事务创建成功并生成一个全局唯一的 XID。</p>
+</li>
+<li><p>XID 在微服务调用链路的上下文中传播。</p>
+</li>
+<li><p>RM 开始执行这个分支事务，RM 首先解析这条 SQL 语句，生成对应的 UNDO_LOG 记录。UNDO_LOG 表中记录了分支 ID，全局事务 ID，以及事务执行的 redo 和 undo 数据以供二阶段恢复。</p>
+</li>
+<li><p>RM 在同一个本地事务中执行业务 SQL 和 UNDO_LOG 数据的插入。在提交这个本地事务前，RM 会向 TC 申请关于这条记录的全局锁 。</p>
+</li>
+<li><p>如果申请不到，则说明有其他事务也在对这条记录进行操作，因此它会在一段时间内重试，重试失败则回滚本地事务，并向 TC 汇报本地事务执行失败。</p>
+</li>
+<li><p>RM 在事务提交前，申请到了相关记录的全局锁，然后直接提交本地事务，并向 TC 汇报本地事务执行成功 。此时全局锁并没有释放，全局锁的释放取决于二阶段是提交命令还是回滚命令。</p>
+</li>
+<li><p>TC 根据所有的分支事务执行结果，向 RM 下发提交或回滚 命令。RM如果 收到 TC 的提交命令 ，首先 立即释放 相关记录的全局 锁 ，然后把提交请求放入一个异步任务的队列中，马上返回提交成功的结果给 TC。异步队列中的提交请求真正执行时，只是删除相应 UNDO LOG 记录而已。</p>
+<p>（1）RM如果 收到 TC 的提交命令 ，首先 立即释放 相关记录的全局 锁 ，然后把提交请求放入一个异步任务的队列中，马上返回提交（2）成功的结果给 TC。异步队列中的提交请求真正执行时，只是删除相应 UNDO LOG 记录而已。</p>
+<p>RM如果 收到 TC 的回滚命令 ，则会开启一个本地事务，通过 XID 和 Branch ID 查找到相应的 UNDO LOG 记录。将 UNDO LOG 中的后镜与当前数据进行比较，</p>
+<p>①如果不同，说明数据被当前全局事务之外的动作做了修改。这种情况，需要根据配置策略来做处理。</p>
+<p>②如果相同，根据 UNDO LOG 中的前镜像和业务 SQL 的相关信息生成并执行回滚的语句并执行，然后提交本地事务达到回滚的目的，最后释放相关记录的全局锁。</p>
+</li>
+</ol>
+<h3 id="4-6小结"><a href="#4-6小结" class="headerlink" title="4.6小结"></a>4.6小结</h3><p>分布式事务本身就是一个技术难题，业务中具体使用哪种方案还是需要不同的业务特点自行选择。分布式事务提高了流程的复杂度，带来很多额外的开销工作，代码量上去了，业务复杂了，性能下跌了。所以，真实开发的过程中，能不使用分布式事务就不使用。</p>
+<h2 id="5-Seata"><a href="#5-Seata" class="headerlink" title="5.Seata"></a>5.Seata</h2><p>Seata 是一款开源的分布式事务解决方案，致力于提供高性能和简单易用的分布式事务服务。Seata 将为用户提供了 AT、TCC、SAGA 和 XA 事务模式，为用户打造一站式的分布式解决方案。</p>
+<ul>
+<li>XA：强一致性，基于数据库隔离，无代码侵入，在一阶段不提交事务</li>
+<li>AT：默认模式，基于全局锁隔离，无代码侵入，一阶段提交事务，在提交事务前，会记录undolog日志，性能比XA模式好，二阶段TC通知回滚，则根据undolog回滚，通知提交，则删除undolog日志。</li>
+<li>TCC:性能最好，不需要依赖关系型数据库，但代码入侵读高。Try:冻结可用数据，Confirm:确认提交数据，删除冻结数据  Canel:恢复数据，将冻结数据恢复。</li>
+<li>Seaga: 用于长事务，例如A项目调另外一个公司的项目接口。</li>
+</ul>
+<h3 id="5-1-Seata术语"><a href="#5-1-Seata术语" class="headerlink" title="5.1 Seata术语"></a><strong>5.1 Seata术语</strong></h3><p><strong>TC (Transaction Coordinator) - 事务协调者</strong></p>
+<p>维护全局和分支事务的状态，驱动全局事务提交或回滚。</p>
+<p><strong>TM (Transaction Manager) - 事务管理器</strong></p>
+<p>定义全局事务的范围：开始全局事务、提交或回滚全局事务。</p>
+<p><strong>RM (Resource Manager) - 资源管理器</strong></p>
+<p>管理分支事务处理的资源，与TC交谈以注册分支事务和报告分支事务的状态，并驱动分支事务提交或回滚。</p>
+<h3 id="5-2引入Seata"><a href="#5-2引入Seata" class="headerlink" title="5.2引入Seata"></a>5.2引入Seata</h3><p><strong>1、在服务调用方部署TC，注意，导入jar包后会自动寻找本地的seata服务</strong></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--seata--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-alibaba-seata<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--版本较低，1.3.0，因此排除--&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>seata-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.seata<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.seata<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>seata-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--seata starter 采用1.4.2版本--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;seata.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2、修改调用方配置文件，根据namespace –&gt;group–&gt;service–&gt;cluster定位TC服务集群</strong></p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">seata:</span></span><br><span class="line">  <span class="attr">registry:</span> <span class="comment"># TC服务注册中心的配置，微服务根据这些信息去注册中心获取tc服务地址</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">nacos</span> <span class="comment"># 注册中心类型 nacos</span></span><br><span class="line">    <span class="attr">nacos:</span></span><br><span class="line">      <span class="attr">server-addr:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span><span class="string">:8848</span> <span class="comment"># nacos地址</span></span><br><span class="line">      <span class="attr">namespace:</span> <span class="string">&quot;&quot;</span> <span class="comment"># namespace，默认为空</span></span><br><span class="line">      <span class="attr">group:</span> <span class="string">DEFAULT_GROUP</span> <span class="comment"># 分组，默认是DEFAULT_GROUP</span></span><br><span class="line">      <span class="attr">application:</span> <span class="string">seata-tc-server</span> <span class="comment"># seata服务名称</span></span><br><span class="line">      <span class="attr">username:</span> <span class="string">nacos</span></span><br><span class="line">      <span class="attr">password:</span> <span class="string">nacos</span></span><br><span class="line">  <span class="attr">tx-service-group:</span> <span class="string">seata-demo</span> <span class="comment"># 事务组名称</span></span><br><span class="line">  <span class="attr">service:</span></span><br><span class="line">    <span class="attr">vgroup-mapping:</span> <span class="comment"># 事务组与cluster的映射关系</span></span><br><span class="line">      <span class="attr">seata-demo:</span> <span class="string">SH</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3AT-Auto-Transaction-模式"><a href="#5-3AT-Auto-Transaction-模式" class="headerlink" title="5.3AT(Auto Transaction)模式"></a>5.3AT(Auto Transaction)模式</h3><p>AT 模式是一种无侵入的分布式事务解决方案。在 AT 模式下，用户只需关注自己的“业务 SQL”，用户的 “业务 SQL” 作为一阶段，Seata 框架会自动生成事务的二阶段提交和回滚操作。</p>
+<p>AT模式是两阶段提交协议的演变：</p>
+<ul>
+<li><p>一阶段：业务数据和回滚日志记录在同一个本地事务中提交，释放本地锁和连接资源。</p>
+</li>
+<li><p>二阶段：</p>
+</li>
+<li><ul>
+<li>提交异步化，非常快速地完成。</li>
+<li>回滚通过一阶段的回滚日志进行反向补偿。</li>
+</ul>
+</li>
+</ul>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/6347bf2616f2c2beb16ee221.png"></p>
+<p>一阶段：TM开启全局事务、TM调用分支、RM注册分支事务、RM记录undolog日志、RM提交事务、TCC记录各分支状态</p>
+<p>二阶段：TM通知提交&#x2F;回滚全局事务、TC检查各分支事务状态，成功，则删除undolog日志，失败，则根据undolog日志回滚。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/6347c00d16f2c2beb170a968.png"></p>
+<p> <strong>脏写问题：</strong></p>
+<p><strong>如果一个A事务执行sql并提交，另一个B事务也执行提交，此时A事务进行回滚，则会回滚为A记录的undolog日志，而B事务的更新修改记录会被忽略，出现了脏写问题。</strong></p>
+<p>在并发环境下，就可能出现脏写问题，如下图所示：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/6347c2da16f2c2beb175e93d.png"></p>
+<p><strong>解决：</strong>引入全局锁，在A事务提交事务释放DB锁之前，申请全局锁，而此时如果B事务进行操作修改，在执行更新数据库操作前会获取全局锁，获取失败，则无法更新，不断重试，但不能一直让其重试，否则A尝试获取B占用的DB锁则会造成死锁，一般让其重试30秒，然后失败则放弃其占有的DB锁，执行失败。A锁此时就能获取DB锁，执行回滚，然后再释放全局锁。</p>
+<p>又引来新问题：如果是另一不归seata管理的事务的？全局锁失败！</p>
+<p>XA也自动带来了解决的方案：</p>
+<p>1）首先记录更新前的记录</p>
+<p>2）记录更新后的记录。</p>
+<p>完整正确的执行流程如下：</p>
+<p>1）原数据假设为100，undolog记录100这个数值。</p>
+<p>2）A事务获取DB锁将数据修改为90，此时undolog记录这条90。</p>
+<p>3）A事务获取全局锁，并提交事务释放DB数据库锁</p>
+<p>4）A事务回滚，在回滚为100前，会比较此时数据是否是90。假设，不归Seata管理的B事务，不需要获取全局锁，然后成功获取DB锁并修改了数据为80，则此时A事务将90（A修改后）与80（B修改）比较，则回滚失败。<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/6347c57116f2c2beb17b3450.png"></p>
+<h3 id="5-4Seata-TCC模型："><a href="#5-4Seata-TCC模型：" class="headerlink" title="5.4Seata TCC模型："></a>5.4Seata TCC模型：</h3><p><strong>Try:</strong> 判断是否有可用数据，足够则冻结可用数据。</p>
+<p><strong>Confirm:</strong>  完成资源的操作业务；要求try成功，confirm一定要成功。</p>
+<p><strong>Cancel:</strong> 预留资源释放，可以理解为try方向操作。</p>
+<p>①阶段1：检查资源是否足够，足够则冻结资源，执行try方法</p>
+<p>②阶段2：执行成功，则执行Confirm方法删除冻结资源。执行失败，执行Canel逻辑，恢复冻结资源<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/6347c86416f2c2beb1810898.png"></p>
+<h3 id="5-5XA模式"><a href="#5-5XA模式" class="headerlink" title="5.5XA模式"></a>5.5XA模式</h3><p>也是咱们常说的二阶段提交，XA要求数据库自己提供对规范和协议的支持。XA用起来的话，也是对业务代码无侵入性的。github</p>
+<p>上述其余三种模式，都是属于<strong>补偿型</strong>，没法保证全局一致性。啥意思呢，例如刚刚说的AT模式，咱们是可能读到这一次分布式事务的中间状态，而XA模式不会。</p>
+<p>可是全局一致性带来的结果就是<strong>数据的锁定</strong>（AT模式也是存在全局锁的，可是隔离级别没法保证，后边咱们会详细说），例如全局事务中有一条update语句，其余事务想要更新同一条数据的话，只能等待全局事务结束。</p>
+<h3 id="5-6-Saga模式"><a href="#5-6-Saga模式" class="headerlink" title="5.6 Saga模式"></a>5.6 Saga模式</h3><p>Saga 是长事务解决方案，每一个参与者须要实现事务的<strong>正向操做和补偿操做</strong>。当参与者正向操做执行失败时，回滚本地事务的同时，会调用上一阶段的补偿操做，在业务失败时最终会使事务回到初始状态spring。</p>
+<p>Saga与TCC相似，一样没有全局锁。因为相比缺乏锁定资源这一步，在某些适合的场景，Saga要比TCC实现起来更简单。<br>因为Saga和TCC都须要咱们手动编码实现，因此在开发时咱们须要参考一些设计上的规范。</p>
+<h3 id="5-7四种事务优缺点介绍"><a href="#5-7四种事务优缺点介绍" class="headerlink" title="5.7四种事务优缺点介绍"></a>5.7四种事务优缺点介绍</h3><p><strong>XA：</strong>强一致性，无代码侵入、但一阶段事务不提交、会锁住资源，导致性能低。需要依赖数据库的事务特性。</p>
+<p><strong>AT：</strong>默认，弱一致性，无代码侵入，一阶段事务直接提交，失败则根据undolog日志回滚，隔离性引入全局锁，但并发几率低，所以性能会比XA好。</p>
+<p><strong>TCC：</strong>无需依赖关系型数据库，基于资源预留隔离。try、confirm、canel需要人工手写，而且需要考虑空悬挂、空回滚、幂等性判断，较为复杂、性能最好，但成本太高。</p>
+<p>**Seaga:**适用于长事务类型，无太多应用场景。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://wangchengji.github.io">凉人夢</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://wangchengji.github.io/fwzssd/62ceeeec.html">https://wangchengji.github.io/fwzssd/62ceeeec.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://wangchengji.github.io" target="_blank">凉人夢</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Seata/">Seata</a></div><div class="post_share"><div class="social-share" data-image="https://pic1.imgdb.cn/item/6343d87716f2c2beb1eda8a5.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wx.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/wx.png" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/img/zfb.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/zfb.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/fwzssd/62e89ee7.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/63368fae16f2c2beb15bb1db.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">权限管理</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/tx3.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">凉人夢</div><div class="author-info__description">我宁愿犯错也不愿意什么也不做</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/WangChengJi"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">1.</span> <span class="toc-text">分布式事务解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.1.</span> <span class="toc-text">1.事务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%9C%AC%E5%9C%B0%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.2.</span> <span class="toc-text">2.本地事务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.3.</span> <span class="toc-text">3.分布式事务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1CAP%E5%AE%9A%E7%90%86"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1CAP定理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2CAP%E6%9D%83%E8%A1%A1"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2CAP权衡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3BASE%E7%90%86%E8%AE%BA"><span class="toc-number">1.3.3.</span> <span class="toc-text">3.3BASE理论</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88"><span class="toc-number">1.4.</span> <span class="toc-text">4.分布式事务的实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4-x2F-XA"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1两阶段提交&#x2F;XA</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-3PC%EF%BC%88%E4%B8%89%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%EF%BC%89"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 3PC（三阶段提交）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3TCC"><span class="toc-number">1.4.3.</span> <span class="toc-text">4.3TCC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4%E6%9C%80%E5%A4%A7%E5%8A%AA%E5%8A%9B%E9%80%9A%E7%9F%A5"><span class="toc-number">1.4.4.</span> <span class="toc-text">4.4最大努力通知</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-Sagas-%E4%BA%8B%E5%8A%A1%E6%A8%A1%E5%9E%8B%E9%95%BF%E6%97%B6%E9%97%B4%E8%BF%90%E8%A1%8C%E7%9A%84%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.4.5.</span> <span class="toc-text">4.5 Sagas 事务模型长时间运行的事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-6%E5%B0%8F%E7%BB%93"><span class="toc-number">1.4.6.</span> <span class="toc-text">4.6小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Seata"><span class="toc-number">1.5.</span> <span class="toc-text">5.Seata</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-Seata%E6%9C%AF%E8%AF%AD"><span class="toc-number">1.5.1.</span> <span class="toc-text">5.1 Seata术语</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2%E5%BC%95%E5%85%A5Seata"><span class="toc-number">1.5.2.</span> <span class="toc-text">5.2引入Seata</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3AT-Auto-Transaction-%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.5.3.</span> <span class="toc-text">5.3AT(Auto Transaction)模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4Seata-TCC%E6%A8%A1%E5%9E%8B%EF%BC%9A"><span class="toc-number">1.5.4.</span> <span class="toc-text">5.4Seata TCC模型：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-5XA%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.5.5.</span> <span class="toc-text">5.5XA模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-6-Saga%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.5.6.</span> <span class="toc-text">5.6 Saga模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-7%E5%9B%9B%E7%A7%8D%E4%BA%8B%E5%8A%A1%E4%BC%98%E7%BC%BA%E7%82%B9%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.5.7.</span> <span class="toc-text">5.7四种事务优缺点介绍</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/fwzssd/62ceeeec.html" title="分布式事务解决方案"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/6343d87716f2c2beb1eda8a5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分布式事务解决方案"/></a><div class="content"><a class="title" href="/fwzssd/62ceeeec.html" title="分布式事务解决方案">分布式事务解决方案</a><time datetime="2022-10-10T08:10:38.000Z" title="发表于 2022-10-10 16:10:38">2022-10-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/fwzssd/62e89ee7.html" title="权限管理"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/63368fae16f2c2beb15bb1db.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="权限管理"/></a><div class="content"><a class="title" href="/fwzssd/62e89ee7.html" title="权限管理">权限管理</a><time datetime="2022-09-30T06:36:28.000Z" title="发表于 2022-09-30 14:36:28">2022-09-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/fwzssd/b172afff.html" title="服务限流"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/6332e19f16f2c2beb112611a.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="服务限流"/></a><div class="content"><a class="title" href="/fwzssd/b172afff.html" title="服务限流">服务限流</a><time datetime="2022-09-27T11:37:08.000Z" title="发表于 2022-09-27 19:37:08">2022-09-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/fwzssd/6926f8db.html" title="Java定时任务"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/6332800716f2c2beb1a2821d.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java定时任务"/></a><div class="content"><a class="title" href="/fwzssd/6926f8db.html" title="Java定时任务">Java定时任务</a><time datetime="2022-09-27T04:18:27.000Z" title="发表于 2022-09-27 12:18:27">2022-09-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/fwzssd/b543ced0.html" title="RabbitMQ"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/6331313216f2c2beb174e10e.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="RabbitMQ"/></a><div class="content"><a class="title" href="/fwzssd/b543ced0.html" title="RabbitMQ">RabbitMQ</a><time datetime="2022-09-26T04:51:56.000Z" title="发表于 2022-09-26 12:51:56">2022-09-26</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 凉人夢</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'EMDp1c6otATIp4fWBJexOy9J-gzGzoHsz',
+      appKey: 'gqXRqOlakscVkhFT7kmnCmFQ',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><div class="aplayer no-destroy" data-id="8608277355" data-server="tencent" data-type="playlist"   data-order="list" data-fixed="true" data-preload="auto" data-autoplay="false" data-mutex="true" ></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '30');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('article-sort-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__slideInRight');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow_init.js"></script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script></body></html>

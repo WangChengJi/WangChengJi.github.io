@@ -1,0 +1,361 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Redis的过期键删除策略 | 凉人夢</title><meta name="keywords" content="Redis"><meta name="author" content="凉人夢"><meta name="copyright" content="凉人夢"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Redis的过期键的删除策略Redis是一种基于内存的高性能键值对(key-value)数据库，而内存的资源相对来说还是比较宝贵的，所以Redis需要定期删除数据库中过期的键值对。 删除策略Redis的删除策略有以下3种：  定时删除：在设置键的过期时间的同时，创建一个定时器，让定时器在键的过期时间来临时，立即执行对键的删除操作。 惰性删除：放任过期键不管，每次从键空间中获取键时，检查该键是否过期">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis的过期键删除策略">
+<meta property="og:url" content="https://wangchengji.github.io/fwzssd/197f8.html">
+<meta property="og:site_name" content="凉人夢">
+<meta property="og:description" content="Redis的过期键的删除策略Redis是一种基于内存的高性能键值对(key-value)数据库，而内存的资源相对来说还是比较宝贵的，所以Redis需要定期删除数据库中过期的键值对。 删除策略Redis的删除策略有以下3种：  定时删除：在设置键的过期时间的同时，创建一个定时器，让定时器在键的过期时间来临时，立即执行对键的删除操作。 惰性删除：放任过期键不管，每次从键空间中获取键时，检查该键是否过期">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images7.alphacoders.com/121/1210460.jpg">
+<meta property="article:published_time" content="2022-09-09T07:25:35.000Z">
+<meta property="article:modified_time" content="2022-09-11T12:03:43.376Z">
+<meta property="article:author" content="凉人夢">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images7.alphacoders.com/121/1210460.jpg"><link rel="shortcut icon" href="/img/tb2.jpeg"><link rel="canonical" href="https://wangchengji.github.io/fwzssd/197f8"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Redis的过期键删除策略',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-09-11 20:03:43'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="凉人夢" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/tx3.jpeg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/bangumis/index.html"><i class="fa-fw fas fa-home"></i><span> 追番</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://images7.alphacoders.com/121/1210460.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">凉人夢</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/bangumis/index.html"><i class="fa-fw fas fa-home"></i><span> 追番</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Redis的过期键删除策略</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-09-09T07:25:35.000Z" title="发表于 2022-09-09 15:25:35">2022-09-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-09-11T12:03:43.376Z" title="更新于 2022-09-11 20:03:43">2022-09-11</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Redis的过期键删除策略"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/fwzssd/197f8.html#post-comment" itemprop="discussionUrl"><span class="valine-comment-count" data-xid="/fwzssd/197f8.html" itemprop="commentCount"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="Redis的过期键的删除策略"><a href="#Redis的过期键的删除策略" class="headerlink" title="Redis的过期键的删除策略"></a>Redis的过期键的删除策略</h2><p>Redis是一种基于内存的高性能键值对(key-value)数据库，而内存的资源相对来说还是比较宝贵的，所以Redis需要定期删除数据库中过期的键值对。</p>
+<h3 id="删除策略"><a href="#删除策略" class="headerlink" title="删除策略"></a>删除策略</h3><p>Redis的删除策略有以下3种：</p>
+<ul>
+<li><strong>定时删除</strong>：在设置键的过期时间的同时，创建一个定时器，让定时器在键的过期时间来临时，立即执行对键的删除操作。</li>
+<li><strong>惰性删除</strong>：放任过期键不管，每次从键空间中获取键时，检查该键是否过期，如果过期，就删除该键，如果没有过期，就返回该键。</li>
+<li><strong>定期删除</strong>：每隔一段时间，程序对数据库进行一次检查，删除里面的过期键，至于要删除哪些数据库的哪些过期键，则由算法决定。</li>
+</ul>
+<p>其中定时删除和定期删除为主动删除策略，惰性删除为被动删除策略。</p>
+<h3 id="定时删除策略"><a href="#定时删除策略" class="headerlink" title="定时删除策略"></a>定时删除策略</h3><p>定时删除策略是使用定时器。定时删除策略可以保证过期键尽可能快地被删除，并释放过期键占用的内存。</p>
+<p>因此，定时删除策略的优缺点如下所示：</p>
+<ul>
+<li>优点：对内存非常友好</li>
+<li>缺点：对CPU时间非常不友好</li>
+</ul>
+<p>举个例子，如果有大量的命令请求等待服务器处理，并且服务器当前不缺少内存，如果服务器将大量的CPU时间用来删除过期键，那么服务器的响应时间和吞吐量就会受到影响。</p>
+<p>也就是说，如果服务器创建大量的定时器，服务器处理命令请求的性能就会降低，</p>
+<p>因此Redis目前并没有使用定时删除策略。</p>
+<h3 id="惰性删除策略"><a href="#惰性删除策略" class="headerlink" title="惰性删除策略"></a>惰性删除策略</h3><p>惰性删除策略只会在获取键时才对键进行过期检查，不会在删除其它无关的过期键花费过多的CPU时间。</p>
+<p>因此，惰性删除策略的优缺点如下所示：</p>
+<ul>
+<li>优点：对CPU时间非常友好</li>
+<li>缺点：对内存非常不友好</li>
+</ul>
+<p>举个例子，如果数据库有很多的过期键，而这些过期键又恰好一直没有被访问到，那这些过期键就会一直占用着宝贵的内存资源，造成资源浪费。</p>
+<h3 id="定期删除策略"><a href="#定期删除策略" class="headerlink" title="定期删除策略"></a>定期删除策略</h3><p>定期删除策略是定时删除策略和惰性删除策略的一种整合折中方案。</p>
+<p>定期删除策略每隔一段时间执行一次删除过期键操作，并通过限制删除操作执行的时长和频率来减少删除操作对CPU时间的影响，同时，通过定期删除过期键，也有效地减少了因为过期键而带来的内存浪费。</p>
+<h3 id="Redis使用的过期键删除策略"><a href="#Redis使用的过期键删除策略" class="headerlink" title="Redis使用的过期键删除策略"></a>Redis使用的过期键删除策略</h3><p>Redis服务器使用的是惰性删除策略和定期删除策略。通过这两种删除策略的配合使用，服务器可以很好的在合理使用CPU时间和避免内存空间浪费之间取得平衡。</p>
+<p><strong>惰性删除策略的实现：</strong></p>
+<p>过期键的删除策略由expireIfNeeded函数实现，所有读写数据库的Redis命令都会在执行钱调用该函数进行检查。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">expireIfNeeded</span><span class="params">(redisDb *db, robj *key)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!keyIsExpired(db,key)) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (server.masterhost != <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    <span class="comment">/* Delete the key */</span></span><br><span class="line">    server.stat_expiredkeys++;</span><br><span class="line">    propagateExpire(db,key,server.lazyfree_lazy_expire);</span><br><span class="line">    </span><br><span class="line">    notifyKeyspaceEvent(NOTIFY_EXPIRED,</span><br><span class="line">        <span class="string">&quot;expired&quot;</span>,key,db-&gt;id);</span><br><span class="line">        </span><br><span class="line">    <span class="type">int</span> retval = server.lazyfree_lazy_expire ? dbAsyncDelete(db,key) :</span><br><span class="line">                                               dbSyncDelete(db,key);</span><br><span class="line">    <span class="keyword">if</span> (retval) signalModifiedKey(<span class="literal">NULL</span>,db,key);</span><br><span class="line">    <span class="keyword">return</span> retval;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看出，如果输入键已经过期，那么expireIfNeed函数将输入键从数据库删除。如果输入键没有过期，则不会做其他动作。所以，每个命令的实现函数都必须能同时处理键存在和不存在两种情况。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/631ae47216f2c2beb17ac3f2.png"></p>
+<p><strong>定期删除策略的实现：</strong></p>
+<p>​		Redis会将每个设置了过期时间的key放入到一个独立的字典中，以后会定期遍历这个字典来删除到期的key。Redis默认每秒进行10次过期扫描（100ms一次，可以通过修改配置文件redis.conf 的 <strong>hz</strong> 选项来调整这个次数），但这个扫描并不会扫描过期字典中所有的key，而是通过一种贪心策略来随机筛选删除key，步骤如下：</p>
+<ol>
+<li>从过期字典中随机选出20个key；</li>
+<li>删除这20个key中已经过期的key；</li>
+<li>如果过期的key的比例超过了1&#x2F;4，那就重复从步骤1开始执行。</li>
+</ol>
+<p>之所以采用这种扫描策略，还是为了性能考虑。假如过期字典中有数百万个key，每隔100ms就扫描一次这数百万个key，会给CPU造成很大的负荷，所以，就选择了这种随机筛选部分key，然后按照过期比例来判断是否需要重复执行筛选过期的动作。</p>
+<p>​		该策略由activeExpireCycle函数实现，每当服务器周期性的操作serverCron函数执行的时候，activeExpireCycle函数就会被调用，在规定的时间内，分多次遍历服务器中的各个数据库，从数据库的expires字典中随你检查一部分的过期时间，并删除其中的过期键。具体代码在redis6在expire.c中，redis3在redis.c中。</p>
+<p><strong>实现原理（activeExpireCycle函数）</strong></p>
+<p>过期键的定期删除策略由redis.c&#x2F;activeExpireCycle函数实现，每当Redis的服务器周期性操作redis.c&#x2F;serverCron函数执行时，activeExpireCycle函数就会被调用，它在规定的时间内， 分多次遍历服务器中的各个数据库，从数据库的expires字典中随机检查一部分键的过期时 间，并删除其中的过期键。<br>整个过程可以用伪代码描述如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">#默认每次检查的数据库数量</span><br><span class="line">DEFAULT_DB_NUMBERS = <span class="number">16</span></span><br><span class="line"></span><br><span class="line">#默认每个数据库检查的键数量</span><br><span class="line">DEFAULT_KEY_NUMBERS = <span class="number">20</span></span><br><span class="line"></span><br><span class="line">#全局变量，记录检查进度</span><br><span class="line">current_db = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">def activeExpireCycle():</span><br><span class="line">    # 初始化要检查的数据库数量</span><br><span class="line">    # 如果服务器的数据库数量比 DEFAULT_DB_NUMBERS 要小</span><br><span class="line">    # 那么以服务器的数据库数量为准</span><br><span class="line">    <span class="keyword">if</span> server.dbnum &lt; DEFAULT_DB_NUMBERS:</span><br><span class="line">        db_numbers = server.dbnum</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        db_numbers = DEFAULT_DB_NUMBERS</span><br><span class="line"># 遍历各个数据库</span><br><span class="line"><span class="keyword">for</span> i in range(db_numbers):</span><br><span class="line">    # 如果current_db 的值等于服务器的数据库数量</span><br><span class="line">    # 这表示检查程序已经遍历了服务器的所有数据库一次</span><br><span class="line">    # 将current_db 重置为<span class="number">0</span> ，开始新的一轮遍历</span><br><span class="line">    <span class="keyword">if</span> current_db == server.dbnum:</span><br><span class="line">        current_db = <span class="number">0</span></span><br><span class="line">   </span><br><span class="line">    # 获取当前要处理的数据库</span><br><span class="line">    redisDb = server.db[current_db]</span><br><span class="line"></span><br><span class="line">    # 将数据库索引增<span class="number">1</span> ，指向下一个要处理的数据库</span><br><span class="line">    current_db += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    # 检查数据库键</span><br><span class="line">    <span class="keyword">for</span> j in range(DEFAULT_KEY_NUMBERS):</span><br><span class="line">        # 如果数据库中没有一个键带有过期时间，那么跳过这个数据库</span><br><span class="line">        <span class="keyword">if</span> redisDb.expires.size() == <span class="number">0</span>: <span class="keyword">break</span></span><br><span class="line">            #随机获取一个带有过期时间的键</span><br><span class="line">            key_with_ttl = redisDb.expires.get_random_key()</span><br><span class="line"></span><br><span class="line">            # 检查键是否过期，如果过期就删除它</span><br><span class="line">            <span class="keyword">if</span> is_expired(key_with_ttl):</span><br><span class="line">                delete_key(key_with_ttl)</span><br><span class="line">            # 已达到时间上限，停止处理</span><br><span class="line">            <span class="keyword">if</span> reach_time_limit(): <span class="keyword">return</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>activeExpireCycle函数的工作模式总结</strong>：</p>
+<p>函数每次运行时，都会从一定数量的数据库中取出一定数量的随机键进行检查，并删除其中的过期键全局变量current_db会记录当前activeExpireCycle函数检查的进度，即当前查询到的数据库，并在下一次 activeExpireCycle函数调用时，接着上一次的进度进行处理。比如说，如果当前 activeExpireCycle函数在遍历完1号数据库完成过期键的删除后，那么下次activeExpireCycle函数执行时，将从2号数据库开始查找并删除过期键随着activeExpireCycle函数的不断执行，服务器中的所有数据库都会被检查一遍，这时函数将current_db变量重置为0，然后再次开始新一轮的检查工作。</p>
+<h3 id="关于AOF、RDB对过期键的处理"><a href="#关于AOF、RDB对过期键的处理" class="headerlink" title="关于AOF、RDB对过期键的处理"></a>关于AOF、RDB对过期键的处理</h3><p><strong>1.生成RDB文件</strong></p>
+<p>  在执行SAVE或者BGSAVE命令创建一个新的RDB文件的时候，程序会对数据库中的过期键进行检查，过期的键不会被保存到新创建的RDB文件中。<br><strong>2.载入RDB文件</strong></p>
+<p>  载入的时候分为两种情况<br>  (1)服务器以主服务器运行。<br>  当服务器以主服务器运行的时候，会对文件中保存的键进行检查，未过期的键会被载入到数据库中，而过期的键则会被忽略，所以过期键对载入RDB文件的主服务器不会造成影响。<br>  (2)服务器以从服务器运行。<br>  当服务器以从服务器运行的时候，会将文件中保存的所有键进行保存，不论是否过期。但是由于主从服务器进行数据同步的时候，从服务器的数据库就会被清空，所以一般来讲，过期键载入RDB文件的从高服务器也不会造成影响<br><strong>3.AOF文件的写入</strong></p>
+<p>  当数据库中某个键已经过期，但是它还没有被惰性删除或者定期删除，那么AOF文件不会因为这个过期键而产生任何影响。当过期键被惰性删除或者定期删除之后，程序会向AOF文件追加一条DEL命令进行显示的删除。<br><strong>4.AOF文件的重写：</strong></p>
+<p>  重写的时候程序会对数据库中的键进行检查，已过期的键不会被保存到重写后的AOF文件中这里有一个有意思的东西，当服务器运行在主从复制模式下的时候，从服务器的过期键删除动作是由主服务器控制的。主服务器在删除一个过期键后，会显示的向所有从服务器发送一个DEL命令，命令从服务器删除这个键；从服务器在执行客户端发送的命令的时候，即使遇到过期的键也不会将过期的键进行删除，是继续像处理未过期的键一样来处理过期键；从服务器只有在接到主服务器发送来的DEL命令的时候才会删除过期键。</p>
+<h3 id="内存淘汰策略"><a href="#内存淘汰策略" class="headerlink" title="内存淘汰策略"></a>内存淘汰策略</h3><p>通过上述对redis的对过期键的删除策略的介绍，可以发现无论是惰性删除策略还是定时删除策略，都会存在有过期键没有及时删除的情况，而在某些时刻有大量的键过期，同时又有大量的键要添加时，redis的内存空间就可能把占满，这时候如果想存入新的键，就必须引入内存淘汰策略，先淘汰掉一部分键，再把新的键存入。</p>
+<h4 id="LRU和LFU算法"><a href="#LRU和LFU算法" class="headerlink" title="LRU和LFU算法"></a>LRU和LFU算法</h4><p>在介绍redis的内存淘汰策略之前，需要先了解一下两种淘汰最大空闲时间的策略LRU和LFU。</p>
+<ul>
+<li><strong>LRU算法</strong></li>
+</ul>
+<p>LRU（Least Recently Used），表示最近很少使用，也可以理解成最久没有使用。也就是说当内存不够的时候，每次添加一条数据，都需要抛弃一条最久时间没有使用的旧数据。标准的LRU算法一般会使用hash表和双向链表去降低查找和删除元素的时间复杂度，hash表可以赋予链表快速查找到某个key是否存在链表中，同时可以快速删除、添加节点。双向链表的查找时间复杂度是O(n)，删除和插入是O(1)，但是借助HashMap结构，可以使得查找的时间复杂度变成O(1)，Hash表用来查询在链表中的数据位置，链表负责数据的插入，当新数据插入到链表头部时有两种情况。</p>
+<p>1）链表满了，把链表尾部的数据丢弃掉，新加入的缓存直接加入到链表头中。</p>
+<p>2）当链表中的某个缓存被命中时，直接把数据移到链表头部，原本在头节点的缓存就向链表尾部移动。</p>
+<p>这样，经过多次Cache操作之后，最近被命中的缓存，都会存在链表头部的方向，没有命中的，都会在链表尾部方向，当需要替换内容时，由于链表尾部是最少被命中的，我们只需要淘汰链表尾部的数据即可。</p>
+<ul>
+<li><strong>LFU算法</strong></li>
+</ul>
+<p>LFU（Least Frequently Used），表示最近最少使用，它和key的使用次数有关，其思想是：根据key最近被访问的频率进行淘汰，比较少访问的key优先淘汰，反之则保留。LFU的原理是使用计数器来对key进行排序，每次key被访问时，计数器会增大，当计数器越大，意味着当前key的访问越频繁，也就是意味着它是热点数据。 它很好的解决了LRU算法的缺陷：一个很久没有被访问的key，偶尔被访问一次，导致被误认为是热点数据的问题。LFU维护了两个链表，横向组成的链表用来存储访问频率，每个访问频率的节点下存储另外一个具有相同访问频率的缓存数据。具体的工作原理是：</p>
+<p>1）当添加元素时，找到相同访问频次的节点，然后添加到该节点的数据链表的头部。如果该数据链表满了，则移除链表尾部的节点<br>2）当获取元素或者修改元素时，都会增加对应key的访问频次，并把当前节点移动到下一个频次节点</p>
+<p>添加元素时，访问频率默认为1，随着访问次数的增加，频率不断递增。而当前被访问的元素也会随着频率增加进行移动。</p>
+<p><strong>Redis中并不是完全采用LRU和LFU算法，内部做了一些优化，这里只是对这两种算法做一个简单的介绍，详细讲解请参考其他文章。</strong></p>
+<h4 id="Redis中8种内存淘汰策略"><a href="#Redis中8种内存淘汰策略" class="headerlink" title="Redis中8种内存淘汰策略"></a>Redis中8种内存淘汰策略</h4><p><strong>1.noeviction</strong></p>
+<p>不进行数据淘汰，也是Redis的默认配置。这时，当缓存被写满时，再有写请求进来，Redis不再提供服务，直接返回错误。</p>
+<p> <strong>2.volatile-random</strong></p>
+<p>缓存满了之后，在设置了过期时间的键值对中进行随机删除。</p>
+<p><strong>3.volatile-ttl</strong></p>
+<p>缓存满了之后，会针对设置了过期时间的键值对中，根据过期时间的先后顺序进行删除,越早过期的越先被删除。</p>
+<p><strong>4.volatile-lru</strong></p>
+<p>缓存满了之后，针对设置了过期时间的键值对，采用LRU算法进行淘汰。</p>
+<p><strong>5.volatile-lfu</strong></p>
+<p>缓存满了之后，针对设置了过期时间的键值对，采用LFU的算法进行淘汰。</p>
+<p><strong>6.allkeys-random</strong></p>
+<p>缓存满了之后，从所有键值对中随机选择并删除数据。</p>
+<p><strong>7.allkeys-lru</strong></p>
+<p>缓存写满之后，使用LRU算法在所有的数据中进行筛选删除。</p>
+<p><strong>8.allkeys-lfu</strong></p>
+<p>缓存满了之后，使用LRU算法在所有的数据中进行筛选删除。</p>
+<p>在日常使用过程中，主要根据你的数据要求来配置相应的策略，这里我给你三点建议。</p>
+<ul>
+<li>我们优先使用allkeys-lru 策略。这样，我们就可以借助LRU算法去淘汰那些不常用的数据，把最近最常用的放在缓存中，从而提高应用的性能。如果你的数据有明显的冷热区分，建议你使用allkeys-lru策略。</li>
+<li>如果你的数据的访问频率相差不大，也没有冷热之分，直接使用allkeys-random 策略，随机选择淘汰的数据就行。</li>
+<li>如果你的数据有置顶要求，比如置顶新闻等。那么我们就选择volatile-lru策略，同时不给置顶数据设置过期时间，这样一来，置顶的数据永远不会被删除，而其他设置了过期时间的数据，会更加LRU算法进行淘汰</li>
+</ul>
+<p><strong>注意</strong>：基于LFU算法的策略是Redis4.0版本之后增加的，如要使用，请注意自己的redis版本。</p>
+<h4 id="如何获取及设置内存淘汰策略"><a href="#如何获取及设置内存淘汰策略" class="headerlink" title="如何获取及设置内存淘汰策略"></a>如何获取及设置内存淘汰策略</h4><p>1、获取当前内存淘汰策略：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; config get maxmemory-policy</span><br></pre></td></tr></table></figure>
+
+<p>可以看到当前使用的默认的noeviction策略</p>
+<p>2、获取Redis能使用的最大内存大小</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; config get maxmemory</span><br></pre></td></tr></table></figure>
+
+<p>如果不设置最大内存大小或者设置最大内存大小为0，在64位操作系统下不限制内存大小，在32位操作系统下最多使用3GB内存。32 位的机器最大只支持 4GB 的内存，而系统本身就需要一定的内存资源来支持运行，所以 32 位机器限制最大 3 GB 的可用内存</p>
+<p>3、设置淘汰策略</p>
+<p>通过配置文件设置淘汰策略（修改redis.conf文件）：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">maxmemory-policy allkeys-lru</span><br></pre></td></tr></table></figure>
+
+<p>通过命令修改淘汰策略：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; config set maxmemory-policy allkeys-lru</span><br></pre></td></tr></table></figure>
+
+<p>4、设置Redis最大占用内存大小</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">#设置Redis最大占用内存大小为<span class="number">100</span>M</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; config set maxmemory <span class="number">100</span>mb</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://wangchengji.github.io">凉人夢</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://wangchengji.github.io/fwzssd/197f8.html">https://wangchengji.github.io/fwzssd/197f8.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://wangchengji.github.io" target="_blank">凉人夢</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Redis/">Redis</a></div><div class="post_share"><div class="social-share" data-image="https://images7.alphacoders.com/121/1210460.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wx.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/wx.png" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/img/zfb.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/zfb.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/fwzssd/e5adb42e.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/631f2ac916f2c2beb1887f30.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Redis的持久化机制</div></div></a></div><div class="next-post pull-right"><a href="/fwzssd/bae4ff13.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/63102cb516f2c2beb1294b9f.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Redis简介</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/fwzssd/bae4ff13.html" title="Redis简介"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/63102cb516f2c2beb1294b9f.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-09-01</div><div class="title">Redis简介</div></div></a></div><div><a href="/fwzssd/e5adb42e.html" title="Redis的持久化机制"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/631f2ac916f2c2beb1887f30.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-09-12</div><div class="title">Redis的持久化机制</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/tx3.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">凉人夢</div><div class="author-info__description">我宁愿犯错也不愿意什么也不做</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/WangChengJi"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E7%9A%84%E8%BF%87%E6%9C%9F%E9%94%AE%E7%9A%84%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5"><span class="toc-number">1.</span> <span class="toc-text">Redis的过期键的删除策略</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5"><span class="toc-number">1.1.</span> <span class="toc-text">删除策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E6%97%B6%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5"><span class="toc-number">1.2.</span> <span class="toc-text">定时删除策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%83%B0%E6%80%A7%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5"><span class="toc-number">1.3.</span> <span class="toc-text">惰性删除策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E6%9C%9F%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5"><span class="toc-number">1.4.</span> <span class="toc-text">定期删除策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E4%BD%BF%E7%94%A8%E7%9A%84%E8%BF%87%E6%9C%9F%E9%94%AE%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5"><span class="toc-number">1.5.</span> <span class="toc-text">Redis使用的过期键删除策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8EAOF%E3%80%81RDB%E5%AF%B9%E8%BF%87%E6%9C%9F%E9%94%AE%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-number">1.6.</span> <span class="toc-text">关于AOF、RDB对过期键的处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5"><span class="toc-number">1.7.</span> <span class="toc-text">内存淘汰策略</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#LRU%E5%92%8CLFU%E7%AE%97%E6%B3%95"><span class="toc-number">1.7.1.</span> <span class="toc-text">LRU和LFU算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis%E4%B8%AD8%E7%A7%8D%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5"><span class="toc-number">1.7.2.</span> <span class="toc-text">Redis中8种内存淘汰策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96%E5%8F%8A%E8%AE%BE%E7%BD%AE%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5"><span class="toc-number">1.7.3.</span> <span class="toc-text">如何获取及设置内存淘汰策略</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/fwzssd/62ceeeec.html" title="分布式事务解决方案"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/6343d87716f2c2beb1eda8a5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分布式事务解决方案"/></a><div class="content"><a class="title" href="/fwzssd/62ceeeec.html" title="分布式事务解决方案">分布式事务解决方案</a><time datetime="2022-10-10T08:10:38.000Z" title="发表于 2022-10-10 16:10:38">2022-10-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/fwzssd/62e89ee7.html" title="权限管理"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/63368fae16f2c2beb15bb1db.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="权限管理"/></a><div class="content"><a class="title" href="/fwzssd/62e89ee7.html" title="权限管理">权限管理</a><time datetime="2022-09-30T06:36:28.000Z" title="发表于 2022-09-30 14:36:28">2022-09-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/fwzssd/b172afff.html" title="服务限流"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/6332e19f16f2c2beb112611a.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="服务限流"/></a><div class="content"><a class="title" href="/fwzssd/b172afff.html" title="服务限流">服务限流</a><time datetime="2022-09-27T11:37:08.000Z" title="发表于 2022-09-27 19:37:08">2022-09-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/fwzssd/6926f8db.html" title="Java定时任务"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/6332800716f2c2beb1a2821d.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java定时任务"/></a><div class="content"><a class="title" href="/fwzssd/6926f8db.html" title="Java定时任务">Java定时任务</a><time datetime="2022-09-27T04:18:27.000Z" title="发表于 2022-09-27 12:18:27">2022-09-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/fwzssd/b543ced0.html" title="RabbitMQ"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/6331313216f2c2beb174e10e.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="RabbitMQ"/></a><div class="content"><a class="title" href="/fwzssd/b543ced0.html" title="RabbitMQ">RabbitMQ</a><time datetime="2022-09-26T04:51:56.000Z" title="发表于 2022-09-26 12:51:56">2022-09-26</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 凉人夢</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'EMDp1c6otATIp4fWBJexOy9J-gzGzoHsz',
+      appKey: 'gqXRqOlakscVkhFT7kmnCmFQ',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><div class="aplayer no-destroy" data-id="8608277355" data-server="tencent" data-type="playlist"   data-order="list" data-fixed="true" data-preload="auto" data-autoplay="false" data-mutex="true" ></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '30');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('article-sort-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__slideInRight');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow_init.js"></script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script></body></html>
